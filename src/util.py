@@ -37,10 +37,11 @@ def get_rcode_df():
 
 def load_data(rcode, trade_type):
     import glob
-    filelist = glob.glob("../data/apt-{}/{}/*.csv".format(trade_type, rcode))
+    filelist = glob.glob(os.path.join(DATA_PATH, "apt-{}/{}/*.csv".format(trade_type, rcode)))
     list_ = []
-    for file in filelist:
-        df = pd.read_csv(file,index_col=None,header=0)
+    for filepath in filelist[:-7]:
+        print ('load %s ...' % filepath)
+        df = pd.read_csv(filepath, sep='\t')
         list_.append(df)
     item_df = pd.concat(list_)
     return item_df
