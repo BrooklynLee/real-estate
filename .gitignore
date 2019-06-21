@@ -1,0 +1,3 @@
+config/slack.cfg
+data/*
+src/__pycache__
