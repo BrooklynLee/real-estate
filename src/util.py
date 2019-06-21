@@ -5,6 +5,9 @@ import pandas as pd
 DATA_PATH='/home/irteam/blog/real-estate/data'
 
 def read_csv(filepath):
+    return pd.read_csv(os.path.join(DATA_PATH, filepath), sep=",")
+
+def read_tsv(filepath):
     return pd.read_csv(os.path.join(DATA_PATH, filepath), sep="\t")
 
 def send_msg_to_slack(text):
