@@ -22,9 +22,11 @@ class ESClient():
         print(res)
     
     def _query(self, index, query):
-        es.indices.refresh(index=index)
-        res = es.search(index=index, body=query)
+        # es.indices.refresh(index=index)
+        res = self.es.search(index=index, body=query)
         return res
+
+# bulk write
 
 df =  load_data('41131', 'trade')
 # convert pandas dataframe to list of dict
@@ -41,4 +43,13 @@ for item in items:
     })
 es = ESClient()
 es._bulk(docs)
+
+# query results
+
+import pandas as pd
+es = ESClient()
+results = es._query('real-estate', {"query": {"match": { "아파트": "삼정그린뷰"}}})
+items = results['hits']['hits']
+df = pd.DataFrame([x['_source'] for x in items])
+print (df)
 # es._query('real-estate', {"query": {"match_all": {}}})
