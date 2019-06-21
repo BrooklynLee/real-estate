@@ -1,20 +1,36 @@
 from datetime import datetime
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+
 from util import read_csv
+from util import load_data
 
-es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+class ESClient():
+    def __init__(self):
+        self.es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
 
-df = read_csv("apt-trade/41131/201201.csv")
+    def _bulk(self, docs):
+        res = helpers.bulk(self.es, docs)
+        print (res)
+
+    def _put(self, index, dtype, id, doc):
+        res = self.es.index(index=index, doc_type=dtype, id=id, body=doc)
+        print (res)
+    
+    def _get(self, index, dtype, id):
+        res = es.get(index=index, doc_type=dtype, id=id)
+        print(res)
+    
+    def _query(self, index, query):
+        es.indices.refresh(index=index)
+        res = es.search(index=index, body=query)
+        return res
+
+df =  load_data('41131', 'trade')
 # convert pandas dataframe to list of dict
 items = df.to_dict('records')
-data = [item.update({'timestamp': datetime.now()}) for item in items]
-
-# put to es
-# res = es.index(index="real-estate", doc_type='trade', id=1, body=data[0])
-# print(res['result'])
-
-# bulk to es
+print ('# of items : %s' % (len(items)))
+# data = [item.update({'timestamp': datetime.now()}) for item in items]
 docs = []
 for item in items:
     docs.append({
@@ -23,15 +39,6 @@ for item in items:
         '_id': datetime.now(),
         '_source': item
     })
-helpers.bulk(es, docs)
-
-# get from es
-# res = es.get(index="real-estate", doc_type='trade', id=1)
-# print(res['_source'])
-
-# query to es
-# es.indices.refresh(index="real-estate")
-# res = es.search(index="real-estate", body={"query": {"match_all": {}}})
-
-# print search result
-# print (res['hits'])
+es = ESClient()
+es._bulk(docs)
+# es._query('real-estate', {"query": {"match_all": {}}})
