@@ -21,7 +21,7 @@ def send_msg_to_slack(text):
 
 # READ RCODES
 def get_rcode_df():
-    f_in = file('../data/road_code.csv', 'r')
+    f_in = open('../data/road_code.csv', 'r')
     lines = [x[:-1].split(',') for x in f_in.readlines()]
 
     from collections import defaultdict
