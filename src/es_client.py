@@ -1,12 +1,22 @@
+# encoding: utf8
+
+import pandas as pd
 from datetime import datetime
+
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+
+from elasticsearch_dsl import Search
+from elasticsearch_dsl.query import MultiMatch, Match
+from elasticsearch_dsl import Q
 
 from util import load_data
 
 class ESClient():
     def __init__(self):
         self.es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+        self.es.indices.refresh(index="real-estate")
+        self.s = Search(using=self.es)
 
     def _bulk(self, docs):
         res = helpers.bulk(self.es, docs)
@@ -26,38 +36,34 @@ class ESClient():
         return res
 
     def _search_by_date(self, index, date):
-        # es.indices.refresh(index=index)
-        query = {
-            "query": {
-                "match": { 
-                    "date": date}
-            }
-        }
-        res = self.es.search(index=index, body=query)
-        return res
+        q = Q('bool', must=[Q('match', date=date)])
+        s = self.s.query(q)
+        resp = s.execute()
+        return self.result2df(resp)
 
     def _search_by_aptname(self, index, aptname):
-        query = {
-            "query": {
-                "match": { 
-                    "아파트": aptname}
-            }
-        }
-        res = self.es.search(index=index, body=query)
-        return res
+        q = Q('bool', must=[Q('match', 아파트=aptname)])
+        s = self.s.query(q)
+        resp = s.execute()
+        return self.result2df(resp)
 
     def _search_by_rcode(self, index, rcode):
-        query = {
-            "query": {
-                "match": { 
-                    "지역코드": rcode}
-            }
-        }
-        res = self.es.search(index=index, body=query)
-        return res
+        q = Q('bool', must=[Q('match', 지역코드=rcode)])
+        s = self.s.query(q)
+        resp = s.execute()
+        return self.result2df(resp)
 
+    def _search_by_query(self, index, q):
+        s = self.s.query(q)
+        resp = s.execute()
+        return self.result2df(resp)
 
-
+    def result2df(self, resp):
+        data = []
+        for h in resp:
+            data.append(h.to_dict())
+        df = pd.DataFrame(data)
+        return  df
 
 # bulk write
 """
