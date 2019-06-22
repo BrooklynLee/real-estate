@@ -2,13 +2,11 @@ import os
 import requests
 import pandas as pd
 
-DATA_PATH='/home/irteam/blog/real-estate/data'
-
-def read_csv(filepath):
-    return pd.read_csv(os.path.join(DATA_PATH, filepath), sep=",")
+def read_csv(filepath, header=None):
+    return pd.read_csv(filepath, sep=",")
 
 def read_tsv(filepath):
-    return pd.read_csv(os.path.join(DATA_PATH, filepath), sep="\t")
+    return pd.read_csv(filepath, sep="\t")
 
 def send_msg_to_slack(text):
     url = open("../config/slack.cfg", "r").readlines()[0][:-1]
@@ -23,9 +21,9 @@ def send_msg_to_slack(text):
     print(response.text)
 
 # READ RCODES
-def get_rcode_df():
-    f_in = open('../data/road_code.csv', 'r')
-    lines = [x[:-1].split(',') for x in f_in.readlines()]
+def get_rcode_df(filepath):
+    f_in = open(filepath, "r")
+    lines = [line[:-1].split(",") for line in f_in.readlines()]
 
     from collections import defaultdict
     r_dict = defaultdict() 
@@ -38,13 +36,14 @@ def get_rcode_df():
     # r_df.head(10) # metadata
     return r_df
 
+DATA_PATH = '/home/irteam/blog/real-estate/data'
 def load_data(rcode, trade_type):
     import glob
     filelist = glob.glob(os.path.join(DATA_PATH, "apt-{}/{}/*.csv".format(trade_type, rcode)))
     list_ = []
     for filepath in filelist[:-7]:
         print ('load %s ...' % filepath)
-        df = pd.read_csv(filepath, sep='\t')
+        df = read_tsv(filepath, sep='\t')
         list_.append(df)
     item_df = pd.concat(list_)
     return item_df
