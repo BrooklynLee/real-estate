@@ -50,12 +50,15 @@ class ESClient():
     def _search_by_rcode(self, index, rcode):
         q = Q('bool', must=[Q('match', 지역코드=rcode)])
         s = self.s.query(q)
-        resp = s.execute()
+        # resp = s.execute()
+        resp = s.scan()
         return self.result2df(resp)
 
+    # https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html#pagination
     def _search_by_query(self, index, q):
         s = self.s.query(q)
-        resp = s.execute()
+        resp = s.scan() # to access all documents
+        # resp = s.execute()
         return self.result2df(resp)
 
     def result2df(self, resp):
