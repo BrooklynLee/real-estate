@@ -2,7 +2,6 @@ from datetime import datetime
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 
-from util import read_csv
 from util import load_data
 
 class ESClient():
@@ -26,8 +25,42 @@ class ESClient():
         res = self.es.search(index=index, body=query)
         return res
 
-# bulk write
+    def _search_by_date(self, index, date):
+        # es.indices.refresh(index=index)
+        query = {
+            "query": {
+                "match": { 
+                    "date": date}
+            }
+        }
+        res = self.es.search(index=index, body=query)
+        return res
 
+    def _search_by_aptname(self, index, aptname):
+        query = {
+            "query": {
+                "match": { 
+                    "아파트": aptname}
+            }
+        }
+        res = self.es.search(index=index, body=query)
+        return res
+
+    def _search_by_rcode(self, index, rcode):
+        query = {
+            "query": {
+                "match": { 
+                    "지역코드": rcode}
+            }
+        }
+        res = self.es.search(index=index, body=query)
+        return res
+
+
+
+
+# bulk write
+"""
 df =  load_data('41131', 'trade')
 # convert pandas dataframe to list of dict
 items = df.to_dict('records')
@@ -53,3 +86,4 @@ items = results['hits']['hits']
 df = pd.DataFrame([x['_source'] for x in items])
 print (df)
 # es._query('real-estate', {"query": {"match_all": {}}})
+"""
