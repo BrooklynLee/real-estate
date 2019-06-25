@@ -43,7 +43,7 @@ def load_data(rcode, trade_type):
     list_ = []
     for filepath in filelist[:-7]:
         print ('load %s ...' % filepath)
-        df = read_tsv(filepath, sep='\t')
+        df = read_tsv(filepath)
         list_.append(df)
     item_df = pd.concat(list_)
     return item_df
