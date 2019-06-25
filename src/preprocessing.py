@@ -22,8 +22,8 @@ def preprocessing(df):
     labels = ["60m이하", "60-85m2이하", "85m2초과"]
     df['규모'] = pd.cut(df['전용면적'], [0, 65, 85, 99999999],labels = labels)
     df['건축년도'] = df['건축년도'].astype(str)
-    df['년'] = df['년'].astype(str)
-    df['월'] = df['월'].astype(str)
+    df['년'] = df['년'].astype(int)
+    df['월'] = df['월'].astype(int)
     df['date'] = df['date'].astype(str)
     df['date'] = pd.to_datetime(df['date'], format="%Y%m")
     return df
