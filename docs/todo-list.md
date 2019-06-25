@@ -37,6 +37,7 @@
   * 소스코드 제공
 3.1.2 데이터 스크랩하기 (필요한 데이터 직접 가져오기)
 
+* [Web Scraping: Introduction, Best Practices & Caveats](https://medium.com/velotio-perspectives/web-scraping-introduction-best-practices-caveats-9cbf4acc8d0f)
 * BeautifulSoup, Selenium 설명
 * 네이버 부동산 매물 데이터 가져오기  
 
