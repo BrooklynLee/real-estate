@@ -17,7 +17,7 @@ def send_msg_to_slack(text):
         'postman-token': "f0c31595-8d8f-3de1-fc1d-01ec4f93aecc"
         }
 
-    response = requests.request("POST", url, data=payload, headers=headers)
+    response = requests.request("POST", url, data=payload.encode('utf8'), headers=headers)
     print(response.text)
 
 # READ RCODES
